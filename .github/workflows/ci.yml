@@ -8,104 +8,104 @@ env:
   SONAR_PROJECT: 'WebGoat-App'
 
 jobs:
-  # secret-scanning:
-  #   name: Secret Scanning
-  #   runs-on: ubuntu-latest
-  #   container:
-  #     image: zricethezav/gitleaks:latest
-  #   steps:
-  #     - name: Get code
-  #       uses: actions/checkout@v3
-  #     - name: Secret Scanning
-  #       uses: hoainamnv34/gitleaks@main
-  #       with:
-  #         source: '.'
-  #         report_path: 'report.json'
-  #         report_format: 'json'
-  #       continue-on-error: true
-  #     - name: Upload artifacts
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: gitleak-report
-  #         path: report.json
+  secret-scanning:
+    name: Secret Scanning
+    runs-on: ubuntu-latest
+    container:
+      image: zricethezav/gitleaks:latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: Secret Scanning
+        uses: hoainamnv34/gitleaks@main
+        with:
+          source: '.'
+          report_path: 'report.json'
+          report_format: 'json'
+        continue-on-error: true
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitleak-report
+          path: report.json
           
-  # import-secret-Scanning:
-  #   needs: secret-scanning
-  #   name: Upload Secret Scanning Results
-  #   runs-on: ubuntu-latest
-  #   permissions: read-all
-  #   steps:
-  #     - name: Download artifact
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: gitleak-report
-  #         path: .
-  #     - name: import to DefectDojo
-  #       uses: hoainamnv34/import-to-DefectDojo@main
-  #       with:
-  #         host: '${{vars.DEFECTDOJO_URL}}'
-  #         product: ${{env.DOJO_PRODUCT}}
-  #         engagement: ${{env.DOJO_ENGAGEMENT}}
-  #         scan: 'Gitleaks Scan'
-  #         report: 'report.json'
-  #         token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
-  #         active: "True"
-  #         verified: "True"
-  #         test_title: "Secret Scanning"
-  #         close_old_findings: "True"
-  #         close_old_findings_product_scope: "True"
-  #         branch_tag: "${{ github.event.base_ref }}"
-  #         commit_hash: "${{ github.sha }}"
+  import-secret-Scanning:
+    needs: secret-scanning
+    name: Upload Secret Scanning Results
+    runs-on: ubuntu-latest
+    permissions: read-all
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: gitleak-report
+          path: .
+      - name: import to DefectDojo
+        uses: hoainamnv34/import-to-DefectDojo@main
+        with:
+          host: '${{vars.DEFECTDOJO_URL}}'
+          product: ${{env.DOJO_PRODUCT}}
+          engagement: ${{env.DOJO_ENGAGEMENT}}
+          scan: 'Gitleaks Scan'
+          report: 'report.json'
+          token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
+          active: "True"
+          verified: "True"
+          test_title: "Secret Scanning"
+          close_old_findings: "True"
+          close_old_findings_product_scope: "True"
+          branch_tag: "${{ github.event.base_ref }}"
+          commit_hash: "${{ github.sha }}"
           
-  # SCA:
-  #   name: Software Composition Analysis
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Get code
-  #       uses: actions/checkout@v3
-  #     - name: SCA Scanning
-  #       uses: hoainamnv34/dependency-check@main
-  #       with:
-  #         project: ${{env.DOJO_PRODUCT}}
-  #         path: '.'
-  #         format: 'XML'    
-  #     - name: run ls
-  #       run: ls
-  #     - name: Upload Test results
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: SCA-report
-  #         path: ./reports
+  SCA:
+    name: Software Composition Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: SCA Scanning
+        uses: hoainamnv34/dependency-check@main
+        with:
+          project: ${{env.DOJO_PRODUCT}}
+          path: '.'
+          format: 'XML'    
+      - name: run ls
+        run: ls
+      - name: Upload Test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: SCA-report
+          path: ./reports
 
-  # import-SCA:
-    # needs: SCA
-    # name: Import Secret Scanning
-    # runs-on: ubuntu-latest
-    # permissions: read-all
-    # steps:
-    #   - name: Download artifact
-    #     uses: actions/download-artifact@v4
-    #     with:
-    #       name: SCA-report
-    #       path: .
-    #   - name: ls
-    #     run: ls
-    #   - name: import to DefectDojo
-    #     uses: hoainamnv34/import-to-DefectDojo@main
-    #     with:
-    #       host: '${{vars.DEFECTDOJO_URL}}'
-    #       product: ${{env.DOJO_PRODUCT}}
-    #       engagement: ${{env.DOJO_ENGAGEMENT}}
-    #       scan: 'Dependency Check Scan'
-    #       report: 'dependency-check-report.xml'
-    #       token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
-    #       active: "True"
-    #       verified: "True"
-    #       test_title: "Software Composition Analysis"
-    #       close_old_findings: "True"
-    #       close_old_findings_product_scope: "True"
-    #       branch_tag: "${{ github.event.base_ref }}"
-    #       commit_hash: "${{ github.sha }}"
+  import-SCA:
+    needs: SCA
+    name: Import Secret Scanning
+    runs-on: ubuntu-latest
+    permissions: read-all
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: SCA-report
+          path: .
+      - name: ls
+        run: ls
+      - name: import to DefectDojo
+        uses: hoainamnv34/import-to-DefectDojo@main
+        with:
+          host: '${{vars.DEFECTDOJO_URL}}'
+          product: ${{env.DOJO_PRODUCT}}
+          engagement: ${{env.DOJO_ENGAGEMENT}}
+          scan: 'Dependency Check Scan'
+          report: 'dependency-check-report.xml'
+          token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
+          active: "True"
+          verified: "True"
+          test_title: "Software Composition Analysis"
+          close_old_findings: "True"
+          close_old_findings_product_scope: "True"
+          branch_tag: "${{ github.event.base_ref }}"
+          commit_hash: "${{ github.sha }}"
           
   SAST: 
     name: Static Application Security Testing
@@ -123,209 +123,209 @@ jobs:
           sonar_token: ${{ secrets.SONAR_TOKEN }}
           source_directory: './'
 
-  # import-SAST:
-  #   needs: SAST
-  #   name: Import Static Application Security Testing
-  #   runs-on: ubuntu-latest
-  #   permissions: read-all
-  #   steps:
-  #     - name: ls
-  #       run: ls
-  #     - name: import to DefectDojo
-  #       uses: hoainamnv34/import-to-DefectDojo@main
-  #       with:
-  #         host: '${{vars.DEFECTDOJO_URL}}'  
-  #         product: ${{env.DOJO_PRODUCT}}
-  #         engagement: ${{env.DOJO_ENGAGEMENT}}
-  #         scan: 'SonarQube API Import'
-  #         token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
-  #         active: "True"
-  #         verified: "True"
-  #         test_title: "Static Application Security Testing"
-  #         close_old_findings: "True"
-  #         close_old_findings_product_scope: "True"
-  #         branch_tag: "${{ github.event.base_ref }}"
-  #         commit_hash: "${{ github.sha }}"
+  import-SAST:
+    needs: SAST
+    name: Import Static Application Security Testing
+    runs-on: ubuntu-latest
+    permissions: read-all
+    steps:
+      - name: ls
+        run: ls
+      - name: import to DefectDojo
+        uses: hoainamnv34/import-to-DefectDojo@main
+        with:
+          host: '${{vars.DEFECTDOJO_URL}}'  
+          product: ${{env.DOJO_PRODUCT}}
+          engagement: ${{env.DOJO_ENGAGEMENT}}
+          scan: 'SonarQube API Import'
+          token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
+          active: "True"
+          verified: "True"
+          test_title: "Static Application Security Testing"
+          close_old_findings: "True"
+          close_old_findings_product_scope: "True"
+          branch_tag: "${{ github.event.base_ref }}"
+          commit_hash: "${{ github.sha }}"
           
-  # unit-test: 
-  #   name: Unit test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Unit test
-  #       run: echo "unit test"
+  unit-test: 
+    name: Unit test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Unit test
+        run: echo "unit test"
 
-  # dockerfile-scanning:
-  #   name: Dockerfile Scanning
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Set up Python 3.8
-  #       uses: actions/setup-python@v4
-  #       with:
-  #         python-version: 3.8
-  #     - name: Test with Checkov
-  #       id: checkov
-  #       uses: bridgecrewio/checkov-action@master
-  #       with:
-  #         directory: .
-  #         framework: dockerfile
-  #         soft_fail: true
-  #         output_format: json
-  #         output_file_path: ./results
-  #     - name: Upload artifacts
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: checkov-report
-  #         path: ./results
+  dockerfile-scanning:
+    name: Dockerfile Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+      - name: Test with Checkov
+        id: checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: dockerfile
+          soft_fail: true
+          output_format: json
+          output_file_path: ./results
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-report
+          path: ./results
 
-  # import-dockerfile-scanning:
-  #   needs: dockerfile-scanning
-  #   name: Import Secret Scanning
-  #   runs-on: ubuntu-latest
-  #   permissions: read-all
-  #   steps:
-  #     - name: Download artifact
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: checkov-report
-  #         path: .
-  #     - name: ls
-  #       run: ls
-  #     - name: import to DefectDojo
-  #       uses: hoainamnv34/import-to-DefectDojo@main
-  #       with:
-  #         host: '${{vars.DEFECTDOJO_URL}}'
-  #         product: ${{env.DOJO_ENGAGEMENT}}
-  #         engagement: ${{env.DOJO_ENGAGEMENT}}
-  #         scan: 'Checkov Scan'
-  #         report: 'results_json.json'
-  #         token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
-  #         active: "True"
-  #         verified: "True"
-  #         test_title: "Dockerfile Scanning"
-  #         close_old_findings: "True"
-  #         close_old_findings_product_scope: "True"
-  #         branch_tag: "${{ github.event.base_ref }}"
-  #         commit_hash: "${{ github.sha }}"
+  import-dockerfile-scanning:
+    needs: dockerfile-scanning
+    name: Import Secret Scanning
+    runs-on: ubuntu-latest
+    permissions: read-all
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: checkov-report
+          path: .
+      - name: ls
+        run: ls
+      - name: import to DefectDojo
+        uses: hoainamnv34/import-to-DefectDojo@main
+        with:
+          host: '${{vars.DEFECTDOJO_URL}}'
+          product: ${{env.DOJO_ENGAGEMENT}}
+          engagement: ${{env.DOJO_ENGAGEMENT}}
+          scan: 'Checkov Scan'
+          report: 'results_json.json'
+          token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
+          active: "True"
+          verified: "True"
+          test_title: "Dockerfile Scanning"
+          close_old_findings: "True"
+          close_old_findings_product_scope: "True"
+          branch_tag: "${{ github.event.base_ref }}"
+          commit_hash: "${{ github.sha }}"
           
-  # build:
-  #   name: Build docker image
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
-  #     - name: Login Docker Hub
-  #       uses: docker/login-action@v1
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
-  #     - name: Setup Docker Buildx
-  #       uses: docker/setup-buildx-action@v1
-  #       id: buildx
+  build:
+    name: Build docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Login Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v1
+        id: buildx
     
-  #     - name: Get environment variables
-  #       run: |
-  #         echo "sha_short=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
-  #         echo "repo=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+      - name: Get environment variables
+        run: |
+          echo "sha_short=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
+          echo "repo=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
       
-  #     - name: Build and Push Docker Image
-  #       uses: docker/build-push-action@v5
-  #       id: docker_build
-  #       with:
-  #         context: ./
-  #         file: ./Dockerfile
-  #         builder: ${{ steps.buildx.outputs.name }}
-  #         push: true
-  #         tags: ${{ env.repo }}:${{ env.sha_short }}
-  #         outputs: type=docker,dest=myimage.tar
-  #     - name: Upload artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: image
-  #         path: myimage.tar
-  #     - name: Verify
-  #       run: echo ${{ steps.docker_build.outputs.digest }}
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        id: docker_build
+        with:
+          context: ./
+          file: ./Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          push: true
+          tags: ${{ env.repo }}:${{ env.sha_short }}
+          outputs: type=docker,dest=myimage.tar
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: image
+          path: myimage.tar
+      - name: Verify
+        run: echo ${{ steps.docker_build.outputs.digest }}
         
 
-  # container-scanning:
-  #   needs: build
-  #   name: Container Scanning
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Download artifact
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: image
-  #     - name: Load image
-  #       run: |
-  #         docker load -i myimage.tar
-  #         docker image ls -a
+  container-scanning:
+    needs: build
+    name: Container Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: image
+      - name: Load image
+        run: |
+          docker load -i myimage.tar
+          docker image ls -a
 
-  #     - name: Get environment variables
-  #       run: |
-  #         echo "sha_short=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
-  #         echo "repo=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
-  #     - name: Scan image
-  #       uses: aquasecurity/trivy-action@0.20.0
-  #       with:
-  #         image-ref: ${{ env.repo }}:${{ env.sha_short }}
-  #         output: 'trivy-results.json'
-  #         format: json
-  #     - name: Upload artifacts
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: cis-trivy-report
-  #         path: trivy-results.json
+      - name: Get environment variables
+        run: |
+          echo "sha_short=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
+          echo "repo=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+      - name: Scan image
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: ${{ env.repo }}:${{ env.sha_short }}
+          output: 'trivy-results.json'
+          format: json
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: cis-trivy-report
+          path: trivy-results.json
 
 
-  # import-container-scanning:
-  #   needs: container-scanning
-  #   name: Import Container Scanning
-  #   runs-on: ubuntu-latest
-  #   permissions: read-all
-  #   steps:
-  #     - name: Download artifact
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: cis-trivy-report
-  #         path: .
-  #     - name: ls
-  #       run: ls
-  #     - name: import to DefectDojo
-  #       uses: hoainamnv34/import-to-DefectDojo@main
-  #       with:
-  #         host: '${{vars.DEFECTDOJO_URL}}'
-  #         product: ${{env.DOJO_ENGAGEMENT}}
-  #         engagement: ${{env.DOJO_ENGAGEMENT}}
-  #         scan: 'Trivy Scan'
-  #         report: 'trivy-results.json'
-  #         token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
-  #         active: "True"
-  #         verified: "True"
-  #         test_title: "Trivy Container Scanning"
-  #         close_old_findings: "True"
-  #         close_old_findings_product_scope: "True"
-  #         branch_tag: "${{ github.event.base_ref }}"
-  #         commit_hash: "${{ github.sha }}"
+  import-container-scanning:
+    needs: container-scanning
+    name: Import Container Scanning
+    runs-on: ubuntu-latest
+    permissions: read-all
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cis-trivy-report
+          path: .
+      - name: ls
+        run: ls
+      - name: import to DefectDojo
+        uses: hoainamnv34/import-to-DefectDojo@main
+        with:
+          host: '${{vars.DEFECTDOJO_URL}}'
+          product: ${{env.DOJO_ENGAGEMENT}}
+          engagement: ${{env.DOJO_ENGAGEMENT}}
+          scan: 'Trivy Scan'
+          report: 'trivy-results.json'
+          token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
+          active: "True"
+          verified: "True"
+          test_title: "Trivy Container Scanning"
+          close_old_findings: "True"
+          close_old_findings_product_scope: "True"
+          branch_tag: "${{ github.event.base_ref }}"
+          commit_hash: "${{ github.sha }}"
   
-  # evaluate:
-  #   needs: [import-secret-Scanning, import-SCA, import-SAST, import-dockerfile-scanning, import-container-scanning]
-  #   name: Evaluate Pipeline
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: import to DefectDojo
-  #       uses: hoainamnv34/evaluate-pipeline@main
-  #       with:
-  #         host: '${{vars.DEFECTDOJO_URL}}'
-  #         product: ${{env.DOJO_ENGAGEMENT}}
-  #         engagement: ${{env.DOJO_ENGAGEMENT}}
-  #         token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
+  evaluate:
+    needs: [import-secret-Scanning, import-SCA, import-SAST, import-dockerfile-scanning, import-container-scanning]
+    name: Evaluate Pipeline
+    runs-on: ubuntu-latest
+    steps:
+      - name: import to DefectDojo
+        uses: hoainamnv34/evaluate-pipeline@main
+        with:
+          host: '${{vars.DEFECTDOJO_URL}}'
+          product: ${{env.DOJO_ENGAGEMENT}}
+          engagement: ${{env.DOJO_ENGAGEMENT}}
+          token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
 
-  # push-image-to-registry:
-  #   needs: evaluate
-  #   name: Push docker image to registry
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Unit test
-  #       run: echo "push-image-to-registry"
+  push-image-to-registry:
+    needs: evaluate
+    name: Push docker image to registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Unit test
+        run: echo "push-image-to-registry"

@@ -1,0 +1,6 @@
+projectKey=WebGoat-App
+serverUrl=https://sonarqube.vbeecore.com
+serverVersion=10.5.1.90531
+dashboardUrl=https://sonarqube.vbeecore.com/dashboard?id=WebGoat-App
+ceTaskId=d9004835-bd73-4bee-83cd-8bebbb2d3dd5
+ceTaskUrl=https://sonarqube.vbeecore.com/api/ce/task?id=d9004835-bd73-4bee-83cd-8bebbb2d3dd5
