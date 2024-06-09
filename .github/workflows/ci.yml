@@ -217,7 +217,7 @@ jobs:
         uses: hoainamnv34/evaluate-pipeline@main
         with:
           host: '${{vars.DEFECTDOJO_URL}}'
-          product: ${{env.DOJO_ENGAGEMENT}}
+          product: ${{env.DOJO_PRODUCT}}
           engagement: ${{env.DOJO_ENGAGEMENT}}
           token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
 
@@ -332,7 +332,7 @@ jobs:
         uses: hoainamnv34/evaluate-pipeline@main
         with:
           host: '${{vars.DEFECTDOJO_URL}}'
-          product: ${{env.DOJO_ENGAGEMENT}}
+          product: ${{env.DOJO_PRODUCT}}
           engagement: ${{env.DOJO_ENGAGEMENT}}
           token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
 
