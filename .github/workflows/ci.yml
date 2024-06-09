@@ -5,7 +5,7 @@ on:
 env:
   DOJO_PRODUCT: 'WebGoat'
   DOJO_ENGAGEMENT: 'Beta'
-  SONAR_PROJECT: 'WebGoat'
+  SONAR_PROJECT: 'WebGoat-App'
 
 jobs:
   # secret-scanning:
