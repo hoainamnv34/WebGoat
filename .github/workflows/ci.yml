@@ -31,7 +31,7 @@ jobs:
           
   import-secret-Scanning:
     needs: secret-scanning
-    name: Upload Secret Scanning Results
+    name: Upload Secret Scanning Result
     runs-on: ubuntu-latest
     permissions: read-all
     steps:
@@ -79,7 +79,7 @@ jobs:
 
   import-SCA:
     needs: SCA
-    name: Import Secret Scanning
+    name: Upload Secret Scanning Result
     runs-on: ubuntu-latest
     permissions: read-all
     steps:
@@ -125,7 +125,7 @@ jobs:
 
   import-SAST:
     needs: SAST
-    name: Import Static Application Security Testing
+    name: Upload SAST result
     runs-on: ubuntu-latest
     permissions: read-all
     steps:
@@ -180,7 +180,7 @@ jobs:
 
   import-dockerfile-scanning:
     needs: dockerfile-scanning
-    name: Import Secret Scanning
+    name: Upload Secret Scanning result
     runs-on: ubuntu-latest
     permissions: read-all
     steps:
@@ -195,7 +195,7 @@ jobs:
         uses: hoainamnv34/import-to-DefectDojo@main
         with:
           host: '${{vars.DEFECTDOJO_URL}}'
-          product: ${{env.DOJO_ENGAGEMENT}}
+          product: ${{env.DOJO_PRODUCT}}
           engagement: ${{env.DOJO_ENGAGEMENT}}
           scan: 'Checkov Scan'
           report: 'results_json.json'
@@ -208,8 +208,23 @@ jobs:
           branch_tag: "${{ github.event.base_ref }}"
           commit_hash: "${{ github.sha }}"
           
+  evaluate-1:
+    needs: [import-secret-Scanning, import-SCA, import-SAST, import-dockerfile-scanning]
+    name: Evaluate Pipeline 1
+    runs-on: ubuntu-latest
+    steps:
+      - name: import to DefectDojo
+        uses: hoainamnv34/evaluate-pipeline@main
+        with:
+          host: '${{vars.DEFECTDOJO_URL}}'
+          product: ${{env.DOJO_ENGAGEMENT}}
+          engagement: ${{env.DOJO_ENGAGEMENT}}
+          token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
+
+
   build:
     name: Build docker image
+    needs: evaluate-1
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -278,10 +293,9 @@ jobs:
           name: cis-trivy-report
           path: trivy-results.json
 
-
-  import-container-scanning:
+  import-image-scanning:
     needs: container-scanning
-    name: Import Container Scanning
+    name: Upload Image Scanning result
     runs-on: ubuntu-latest
     permissions: read-all
     steps:
@@ -296,7 +310,7 @@ jobs:
         uses: hoainamnv34/import-to-DefectDojo@main
         with:
           host: '${{vars.DEFECTDOJO_URL}}'
-          product: ${{env.DOJO_ENGAGEMENT}}
+          product: ${{env.DOJO_PRODUCT}}
           engagement: ${{env.DOJO_ENGAGEMENT}}
           scan: 'Trivy Scan'
           report: 'trivy-results.json'
@@ -309,9 +323,9 @@ jobs:
           branch_tag: "${{ github.event.base_ref }}"
           commit_hash: "${{ github.sha }}"
   
-  evaluate:
-    needs: [import-secret-Scanning, import-SCA, import-SAST, import-dockerfile-scanning, import-container-scanning]
-    name: Evaluate Pipeline
+  evaluate-2:
+    needs: import-image-scanning
+    name: Evaluate Pipeline 2
     runs-on: ubuntu-latest
     steps:
       - name: import to DefectDojo
@@ -323,7 +337,7 @@ jobs:
           token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
 
   push-image-to-registry:
-    needs: evaluate
+    needs: evaluate-2
     name: Push docker image to registry
     runs-on: ubuntu-latest
     steps:
