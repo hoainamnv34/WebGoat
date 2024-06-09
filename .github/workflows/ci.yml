@@ -31,7 +31,7 @@ jobs:
           
   import-secret-Scanning:
     needs: secret-scanning
-    name: Upload Secret Scanning Result
+    name: Upload Results
     runs-on: ubuntu-latest
     permissions: read-all
     steps:
@@ -58,7 +58,7 @@ jobs:
           commit_hash: "${{ github.sha }}"
           
   SCA:
-    name: Software Composition Analysis
+    name: SCA
     runs-on: ubuntu-latest
     steps:
       - name: Get code
@@ -79,7 +79,7 @@ jobs:
 
   import-SCA:
     needs: SCA
-    name: Upload Secret Scanning Result
+    name: Upload results
     runs-on: ubuntu-latest
     permissions: read-all
     steps:
@@ -108,7 +108,7 @@ jobs:
           commit_hash: "${{ github.sha }}"
           
   SAST: 
-    name: Static Application Security Testing
+    name: SAST
     runs-on: ubuntu-latest
     steps:
       - name: Get code
@@ -125,7 +125,7 @@ jobs:
 
   import-SAST:
     needs: SAST
-    name: Upload SAST result
+    name: Upload Results
     runs-on: ubuntu-latest
     permissions: read-all
     steps:
@@ -180,7 +180,7 @@ jobs:
 
   import-dockerfile-scanning:
     needs: dockerfile-scanning
-    name: Upload Secret Scanning result
+    name: Upload Results
     runs-on: ubuntu-latest
     permissions: read-all
     steps:
@@ -262,9 +262,9 @@ jobs:
         run: echo ${{ steps.docker_build.outputs.digest }}
         
 
-  container-scanning:
+  image-scanning:
     needs: build
-    name: Container Scanning
+    name: Image Scanning
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -294,8 +294,8 @@ jobs:
           path: trivy-results.json
 
   import-image-scanning:
-    needs: container-scanning
-    name: Upload Image Scanning result
+    needs: image-scanning
+    name: Upload Results
     runs-on: ubuntu-latest
     permissions: read-all
     steps:
@@ -324,7 +324,7 @@ jobs:
           commit_hash: "${{ github.sha }}"
   
   evaluate-2:
-    needs: import-image-scanning
+    needs:  image-scanning
     name: Evaluate Pipeline 2
     runs-on: ubuntu-latest
     steps:
