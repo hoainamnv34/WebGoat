@@ -129,7 +129,7 @@ jobs:
         uses: hoainamnv34/sonarqube-action@main
         with:
           sonar_host_url: ${{ vars.SONAR_HOST_URL }} # URL của SonarQube Server, được lấy từ biến `vars.SONAR_HOST_URL`
-          sonar_scanner_opts: '-Dsonar.projectKey=${{env.SONAR_PROJECT }} -Dsonar.exclusions=**/*.java -Xmx512m'  Tùy chọn cho SonarScanner, bao gồm projectKey, loại trừ các tệp `.java`, và thiết lập bộ nhớ tối đa
+          sonar_scanner_opts: '-Dsonar.projectKey=${{env.SONAR_PROJECT }} -Dsonar.exclusions=**/*.java -Xmx512m'  # Tùy chọn cho SonarScanner, bao gồm projectKey, loại trừ các tệp `.java`, và thiết lập bộ nhớ tối đa
           sonar_token: ${{ secrets.SONAR_TOKEN }}  #Token xác thực với SonarQube Server, được lấy từ secret `SONAR_TOKEN`
           source_directory: './' # Đường dẫn tới thư mục gốc của mã nguồn để quét
 
