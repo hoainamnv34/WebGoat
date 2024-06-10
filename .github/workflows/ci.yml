@@ -125,13 +125,22 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: SonarQube Scan
-        uses: hoainamnv34/sonarqube-action@main
-        with:
-          sonar_host_url: ${{ vars.SONAR_HOST_URL }} # URL của SonarQube Server, được lấy từ biến `vars.SONAR_HOST_URL`
-          sonar_scanner_opts: '-Dsonar.projectKey=${{env.SONAR_PROJECT }} -Dsonar.exclusions=**/*.java -Xmx512m'  # Tùy chọn cho SonarScanner, bao gồm projectKey, loại trừ các tệp `.java`, và thiết lập bộ nhớ tối đa
-          sonar_token: ${{ secrets.SONAR_TOKEN }}  #Token xác thực với SonarQube Server, được lấy từ secret `SONAR_TOKEN`
-          source_directory: './' # Đường dẫn tới thư mục gốc của mã nguồn để quét
+      - name: SonarQube
+        run: |
+          docker run \
+          --rm \
+          -e SONAR_HOST_URL="https://sonarqube.vbeecore.com" \
+          -e SONAR_SCANNER_OPTS="-Dsonar.projectKey=WebGoat-App -Dsonar.exclusions=**/*.java -Xmx512m" \
+          -e SONAR_TOKEN="sqp_4299ccde3e8ad8d612fe0d1998961703efd5261f" \
+          -v "./:/usr/src" \
+          sonarsource/sonar-scanner-cli
+      # - name: SonarQube Scan
+      #   uses: hoainamnv34/sonarqube-action@main
+      #   with:
+      #     sonar_host_url: ${{ vars.SONAR_HOST_URL }} # URL của SonarQube Server, được lấy từ biến `vars.SONAR_HOST_URL`
+      #     sonar_scanner_opts: '-Dsonar.projectKey=${{env.SONAR_PROJECT }} -Dsonar.exclusions=**/*.java -Xmx512m'  # Tùy chọn cho SonarScanner, bao gồm projectKey, loại trừ các tệp `.java`, và thiết lập bộ nhớ tối đa
+      #     sonar_token: ${{ secrets.SONAR_TOKEN }}  #Token xác thực với SonarQube Server, được lấy từ secret `SONAR_TOKEN`
+      #     source_directory: './' # Đường dẫn tới thư mục gốc của mã nguồn để quét
 
   # Upload Static Application Security Testing Results lên DefectDojo (tương tự Upload Secret Scanning)
   import-SAST:
