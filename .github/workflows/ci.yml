@@ -9,7 +9,7 @@ on:
 #   SONAR_PROJECT: projectKey của project trong SonarQube
 env:
   DOJO_PRODUCT: 'WebGoat' 
-  DOJO_ENGAGEMENT: 'Beta'
+  DOJO_ENGAGEMENT: 'Beta CI'
   SONAR_PROJECT: 'WebGoat-App'
 
 jobs:
