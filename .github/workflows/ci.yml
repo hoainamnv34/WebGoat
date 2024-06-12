@@ -344,7 +344,7 @@ jobs:
           token:  ${{ env.DEFECT_DOJO_API_TOKEN }}
           active: "True"
           verified: "True"
-          test_title: "Trivy Container Scanning"
+          test_title: "Docker Image Scanning"
           close_old_findings: "True"
           close_old_findings_product_scope: "True"
           branch_tag: "${{ github.event.base_ref }}"
