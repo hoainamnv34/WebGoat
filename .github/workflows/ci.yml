@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: SCA Scanning
         uses: hoainamnv34/dependency-check@main
         with:
@@ -184,7 +184,7 @@ jobs:
     name: Dockerfile Scanning
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
@@ -254,7 +254,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       # - name: Login Docker Hub  # Login Docker Hub
       #   uses: docker/login-action@v1
       #   with:
@@ -293,7 +293,7 @@ jobs:
     name: Image Scanning
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
