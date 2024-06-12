@@ -13,10 +13,10 @@ on:
 env:
   DEFECTDOJO_URL: 'https://defectdojo.vbeecore.com'
   DEFECT_DOJO_API_TOKEN: '42e9046f889e6d43fe020bb803f44e73173c1367'
-  DOJO_PRODUCT: 'WebGoat' 
+  DOJO_PRODUCT: 'esupport-backend' 
   DOJO_ENGAGEMENT: 'Beta CI'
   SONAR_HOST_URL: 'https://sonarqube.vbeecore.com'
-  SONAR_PROJECT: 'WebGoat-App'
+  SONAR_PROJECT: 'esupport-backend'
   SONAR_TOKEN: 'sqa_b4f429a78412d3a597e44dc5676e306816bca5e9'
 
 jobs:
