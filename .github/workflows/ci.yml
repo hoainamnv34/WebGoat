@@ -1,16 +1,23 @@
 name: Continuous Integration
 on:
-  push:
   workflow_dispatch:
 
 # Các biến môi trường:
+#   DEFECTDOJO_URL: Địa chỉ URL của DefectDojo
+#   DEFECT_DOJO_API_TOKEN: Token của DefectDojo
 #   DOJO_PRODUCT: ứng với tên Product trong DefectDojo
 #   DOJO_ENGAGEMENT: ứng với tên Engagement trong Product
+#   SONAR_HOST_URL: URL của SonarQube Server
 #   SONAR_PROJECT: projectKey của project trong SonarQube
+#   SONAR_TOKEN: Token xác thực với SonarQube Server, được lấy từ secret `SONAR_TOKEN`
 env:
+  DEFECTDOJO_URL: 'https://defectdojo.vbeecore.com'
+  DEFECT_DOJO_API_TOKEN: '42e9046f889e6d43fe020bb803f44e73173c1367'
   DOJO_PRODUCT: 'WebGoat' 
   DOJO_ENGAGEMENT: 'Beta CI'
+  SONAR_HOST_URL: 'https://sonarqube.vbeecore.com'
   SONAR_PROJECT: 'WebGoat-App'
+  SONAR_TOKEN: 'sqa_b4f429a78412d3a597e44dc5676e306816bca5e9'
 
 jobs:
   # Secret Scanning
@@ -53,12 +60,12 @@ jobs:
       - name: import to DefectDojo
         uses: hoainamnv34/import-to-DefectDojo@main
         with:
-          host: '${{vars.DEFECTDOJO_URL}}' # Địa chỉ URL của DefectDojo, được lấy từ biến môi trường 'DEFECTDOJO_URL'
+          host: '${{env.DEFECTDOJO_URL}}' # Địa chỉ URL của DefectDojo, được lấy từ biến môi trường 'DEFECTDOJO_URL'
           product: ${{env.DOJO_PRODUCT}} # Tên Product trong DefectDojo, được lấy từ biến môi trường 'DOJO_PRODUCT'
           engagement: ${{env.DOJO_ENGAGEMENT}} # Tên engagement trong DefectDojo, được lấy từ biến môi trường 'DOJO_ENGAGEMENT'
           scan: 'Gitleaks Scan' # Loại scan
           report: 'report.json'  # Path của file report
-          token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }} # Token của DefectDojo. Lấy tại DEFECTDOJO_URL/api/key-v2. Được lưu trong secrets của repo
+          token:  ${{ env.DEFECT_DOJO_API_TOKEN }} # Token của DefectDojo. Lấy tại DEFECTDOJO_URL/api/key-v2. Được lưu trong secrets của repo
           active: "True" # Đánh dấu các findings trong lần upload này là active
           verified: "True" # Đánh dấu các findings trong lần upload này là verified
           test_title: "Secret Scanning"  # Tiêu đề của bài kiểm thử
@@ -97,17 +104,15 @@ jobs:
         with:
           name: SCA-report
           path: .
-      - name: ls
-        run: ls
       - name: import to DefectDojo
         uses: hoainamnv34/import-to-DefectDojo@main
         with:
-          host: '${{vars.DEFECTDOJO_URL}}'
+          host: '${{env.DEFECTDOJO_URL}}'
           product: ${{env.DOJO_PRODUCT}}
           engagement: ${{env.DOJO_ENGAGEMENT}}
           scan: 'Dependency Check Scan'
           report: 'dependency-check-report.xml'
-          token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
+          token:  ${{ env.DEFECT_DOJO_API_TOKEN }}
           active: "True"
           verified: "True"
           test_title: "Software Composition Analysis"
@@ -135,15 +140,13 @@ jobs:
         run: |
           docker run \
           --rm \
-          -e SONAR_HOST_URL="${{vars.SONAR_HOST_URL}}" \
+          -e SONAR_HOST_URL="${{env.SONAR_HOST_URL}}" \
           -e SONAR_SCANNER_OPTS="-Dsonar.projectKey=${{env.SONAR_PROJECT}} -Dsonar.exclusions=**/*.java -Xmx512m" \
-          -e SONAR_TOKEN="${{secrets.SONAR_TOKEN}}" \
+          -e SONAR_TOKEN="${{env.SONAR_TOKEN}}" \
           -v "./:/usr/src" \
           sonarsource/sonar-scanner-cli
 
 
-
-  
   # Upload Static Application Security Testing Results lên DefectDojo (tương tự Upload Secret Scanning)
   import-SAST:
     needs: SAST
@@ -156,11 +159,11 @@ jobs:
       - name: import to DefectDojo
         uses: hoainamnv34/import-to-DefectDojo@main
         with:
-          host: '${{vars.DEFECTDOJO_URL}}'  
+          host: '${{env.DEFECTDOJO_URL}}'  
           product: ${{env.DOJO_PRODUCT}}
           engagement: ${{env.DOJO_ENGAGEMENT}}
           scan: 'SonarQube API Import'
-          token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
+          token:  ${{ env.DEFECT_DOJO_API_TOKEN }}
           active: "True"
           verified: "True"
           test_title: "Static Application Security Testing"
@@ -213,17 +216,15 @@ jobs:
         with:
           name: checkov-report
           path: .
-      - name: ls
-        run: ls
       - name: import to DefectDojo
         uses: hoainamnv34/import-to-DefectDojo@main
         with:
-          host: '${{vars.DEFECTDOJO_URL}}'
+          host: '${{env.DEFECTDOJO_URL}}'
           product: ${{env.DOJO_PRODUCT}}
           engagement: ${{env.DOJO_ENGAGEMENT}}
           scan: 'Checkov Scan'
           report: 'results_json.json'
-          token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
+          token:  ${{ env.DEFECT_DOJO_API_TOKEN }}
           active: "True"
           verified: "True"
           test_title: "Dockerfile Scanning"
@@ -241,10 +242,10 @@ jobs:
       - name: import to DefectDojo
         uses: hoainamnv34/evaluate-pipeline@main
         with:
-          host: '${{vars.DEFECTDOJO_URL}}' # URL của DefectDojo Server, được lấy từ biến `DEFECTDOJO_URL`
+          host: '${{env.DEFECTDOJO_URL}}' # URL của DefectDojo Server, được lấy từ biến `DEFECTDOJO_URL`
           product: ${{env.DOJO_PRODUCT}}  # Tên Product trong DefectDojo, được lấy từ biến môi trường `DOJO_PRODUCT`
           engagement: ${{env.DOJO_ENGAGEMENT}} # Tên engagement trong DefectDojo, được lấy từ biến môi trường `DOJO_ENGAGEMENT`
-          token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }} # Token API của DefectDojo, được lấy từ secrets `DEFECT_DOJO_API_TOKEN`
+          token:  ${{ env.DEFECT_DOJO_API_TOKEN }} # Token API của DefectDojo, được lấy từ secrets `DEFECT_DOJO_API_TOKEN`
 
   #Build Docker Image
   build:
@@ -335,12 +336,12 @@ jobs:
       - name: import to DefectDojo
         uses: hoainamnv34/import-to-DefectDojo@main
         with:
-          host: '${{vars.DEFECTDOJO_URL}}'
+          host: '${{env.DEFECTDOJO_URL}}'
           product: ${{env.DOJO_PRODUCT}}
           engagement: ${{env.DOJO_ENGAGEMENT}}
           scan: 'Trivy Scan'
           report: 'trivy-results.json'
-          token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
+          token:  ${{ env.DEFECT_DOJO_API_TOKEN }}
           active: "True"
           verified: "True"
           test_title: "Trivy Container Scanning"
@@ -358,10 +359,10 @@ jobs:
       - name: import to DefectDojo
         uses: hoainamnv34/evaluate-pipeline@main
         with:
-          host: '${{vars.DEFECTDOJO_URL}}'
+          host: '${{env.DEFECTDOJO_URL}}'
           product: ${{env.DOJO_PRODUCT}}
           engagement: ${{env.DOJO_ENGAGEMENT}}
-          token:  ${{ secrets.DEFECT_DOJO_API_TOKEN }}
+          token:  ${{ env.DEFECT_DOJO_API_TOKEN }}
 
   push-image-to-registry:
     needs: evaluate-2
