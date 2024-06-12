@@ -186,7 +186,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python 3.8
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.8
       - name: Test with Checkov
@@ -261,7 +261,7 @@ jobs:
       #     username: ${{ secrets.DOCKERHUB_USERNAME }}  # Tên người dùng Docker Hub, được lấy từ secrets `DOCKERHUB_USERNAME`
       #     password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }} # Mật khẩu hoặc token truy cập Docker Hub, được lấy từ secrets `DOCKERHUB_ACCESS_TOKEN`
       - name: Setup Docker Buildx # Thiết lập Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
         id: buildx
     
       - name: Get environment variables # Lấy tên repo làm tên Image và sha_short để làm tag của Image
